@@ -1,0 +1,105 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Program {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String
+  duration    Int
+  groups      Group[]
+  models      Model[]
+}
+
+model Group {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  schedule_day  String
+  schedule_time String
+  program   Program    @relation(fields: [programId], references: [id])
+  programId String     @db.ObjectId
+  children  Child[]
+  payments  Payment[]
+}
+
+model Child {
+  id           String       @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  birthDate    String?
+  schoolLevel  String?
+  group        Group        @relation(fields: [groupId], references: [id])
+  groupId      String       @db.ObjectId
+  parent       Parent?       @relation(fields: [parentId], references: [id])
+  parentId     String?       @db.ObjectId
+  attendance   Attendance[]
+  models       Model[]
+  payments     Payment[]
+  invitation   Invitation?
+  progressions Progression[]
+}
+
+model Parent {
+  id                 String   @id @default(auto()) @map("_id") @db.ObjectId
+  name               String
+  email              String   @unique
+  password           String
+  registrationStatus String
+  children           Child[]
+}
+
+model Invitation {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  email          String
+  invitationCode String   @unique
+  expirationDate DateTime
+  status         String
+  child          Child    @relation(fields: [childId], references: [id])
+  childId        String   @db.ObjectId @unique
+}
+
+model Attendance {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  child   Child    @relation(fields: [childId], references: [id])
+  childId String   @db.ObjectId
+  date    String
+  status  String
+}
+
+model Model {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  child     Child    @relation(fields: [childId], references: [id])
+  childId   String   @db.ObjectId
+  program   Program  @relation(fields: [programId], references: [id])
+  programId String   @db.ObjectId
+}
+
+model Payment {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  amount  Float
+  date    DateTime
+  method  String
+  child   Child?   @relation(fields: [childId], references: [id])
+  childId String?  @db.ObjectId
+  group   Group?   @relation(fields: [groupId], references: [id])
+  groupId String?  @db.ObjectId
+}
+
+model Admin {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  username String @unique
+  password String
+}
+
+model Progression {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  child       Child    @relation(fields: [childId], references: [id])
+  childId     String   @db.ObjectId
+  activity    String
+  completedAt DateTime
+}
