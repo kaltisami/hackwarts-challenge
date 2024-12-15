@@ -7,6 +7,10 @@ import childrenRoutes from './src/routes/childrenRoutes.js';
 import parentRoutes from './src/routes/parentRoutes.js';
 import invitationRoutes from './src/routes/invitationRoutes.js';
 import attendanceRoutes from './src/routes/attendanceRoutes.js';
+import modelRoutes from './src/routes/modelRoutes.js';
+import paymentRoutes from './src/routes/paymentRoutes.js';
+import adminRoutes from './src/routes/adminRoutes.js';
+import progressionRoutes from './src/routes/progressionRoutes.js';
 
 dotenv.config();
 
@@ -23,6 +27,10 @@ app.use('/api/children', childrenRoutes);
 app.use('/api/parents', parentRoutes);
 app.use('/api/invitations', invitationRoutes);
 app.use('/api/attendance', attendanceRoutes);
+app.use('/api/model', modelRoutes);
+app.use('/api/payment', paymentRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/progression', progressionRoutes);
 
 
 app.listen(port, () => {
